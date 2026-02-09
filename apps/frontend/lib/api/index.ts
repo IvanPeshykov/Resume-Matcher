@@ -32,22 +32,10 @@ export {
 
 // Config operations
 export {
-  fetchLlmConfig,
-  fetchLlmApiKey,
-  updateLlmConfig,
-  updateLlmApiKey,
-  testLlmConnection,
-  fetchSystemStatus,
-  PROVIDER_INFO,
-  fetchPromptConfig,
-  updatePromptConfig,
   type LLMProvider,
   type LLMConfig,
   type LLMConfigUpdate,
   type DatabaseStats,
   type SystemStatus,
   type LLMHealthCheck,
-  type PromptOption,
-  type PromptConfig,
-  type PromptConfigUpdate,
 } from './config';

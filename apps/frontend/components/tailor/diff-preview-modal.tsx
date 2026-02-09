@@ -9,6 +9,7 @@ import type {
   ResumeDiffSummary,
   ResumeFieldDiff,
 } from '@/components/common/resume_previewer_context';
+import { Loader2 } from 'lucide-react';
 
 interface DiffPreviewModalProps {
   isOpen: boolean;
@@ -18,6 +19,7 @@ interface DiffPreviewModalProps {
   diffSummary?: ResumeDiffSummary;
   detailedChanges?: ResumeFieldDiff[];
   errorMessage?: string;
+  confirmLoading?: boolean;
 }
 
 export function DiffPreviewModal({
@@ -28,6 +30,7 @@ export function DiffPreviewModal({
   diffSummary,
   detailedChanges,
   errorMessage,
+  confirmLoading = false, // NEW
 }: DiffPreviewModalProps) {
   const { t } = useTranslations();
   const [expandedSections, setExpandedSections] = useState<Set<string>>(
@@ -278,9 +281,22 @@ export function DiffPreviewModal({
             <X className="w-4 h-4" />
             {t('tailor.diffModal.rejectButton')}
           </Button>
-          <Button onClick={onConfirm} className="gap-2 bg-[#15803D] hover:bg-[#166534]">
-            <CheckCircle className="w-4 h-4" />
-            {t('tailor.diffModal.confirmButton')}
+          <Button
+            onClick={onConfirm}
+            className="gap-2 bg-[#15803D] hover:bg-[#166534]"
+            disabled={confirmLoading}
+          >
+            {confirmLoading ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                {t('common.processing')}
+              </>
+            ) : (
+              <>
+                <CheckCircle className="w-4 h-4" />
+                {t('tailor.diffModal.confirmButton')}
+              </>
+            )}
           </Button>
         </div>
       </DialogContent>

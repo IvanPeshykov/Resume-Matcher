@@ -7,7 +7,6 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { Card, CardTitle, CardDescription } from '@/components/ui/card';
-import Link from 'next/link';
 import { useTranslations } from '@/lib/i18n';
 
 // Optimized Imports for Performance (No Barrel Imports)
@@ -15,8 +14,6 @@ import Loader2 from 'lucide-react/dist/esm/icons/loader-2';
 import AlertCircle from 'lucide-react/dist/esm/icons/alert-circle';
 import RefreshCw from 'lucide-react/dist/esm/icons/refresh-cw';
 import Plus from 'lucide-react/dist/esm/icons/plus';
-import Settings from 'lucide-react/dist/esm/icons/settings';
-import AlertTriangle from 'lucide-react/dist/esm/icons/alert-triangle';
 
 import { fetchResume, fetchResumeList, deleteResume, type ResumeListItem } from '@/lib/api/resume';
 import { useStatusCache } from '@/lib/context/status-cache';
@@ -24,35 +21,24 @@ import { useStatusCache } from '@/lib/context/status-cache';
 type ProcessingStatus = 'pending' | 'processing' | 'ready' | 'failed' | 'loading';
 
 export default function DashboardPage() {
-  const { t, locale } = useTranslations();
+  const { t } = useTranslations();
   const [masterResumeId, setMasterResumeId] = useState<string | null>(null);
   const [processingStatus, setProcessingStatus] = useState<ProcessingStatus>('loading');
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [tailoredResumes, setTailoredResumes] = useState<ResumeListItem[]>([]);
   const router = useRouter();
 
-  // Status cache for optimistic counter updates and LLM status check
-  const {
-    status: systemStatus,
-    isLoading: statusLoading,
-    incrementResumes,
-    decrementResumes,
-    setHasMasterResume,
-  } = useStatusCache();
+  // Status cache for optimistic counter updates
+  const { incrementResumes, decrementResumes, setHasMasterResume } = useStatusCache();
 
-  // Check if LLM is configured (API key is set)
-  const isLlmConfigured = !statusLoading && systemStatus?.llm_configured;
-
-  const isTailorEnabled =
-    Boolean(masterResumeId) && processingStatus === 'ready' && isLlmConfigured;
+  const isTailorEnabled = Boolean(masterResumeId) && processingStatus === 'ready';
 
   const formatDate = (value: string) => {
     if (!value) return t('common.unknown');
     const date = new Date(value);
     if (Number.isNaN(date.getTime())) return t('common.unknown');
 
-    const dateLocale =
-      locale === 'es' ? 'es-ES' : locale === 'zh' ? 'zh-CN' : locale === 'ja' ? 'ja-JP' : 'en-US';
+    const dateLocale = 'en-US';
 
     return date.toLocaleDateString(dateLocale, {
       month: 'short',
@@ -192,86 +178,33 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      {/* Configuration Warning Banner */}
-      {masterResumeId && !isLlmConfigured && !statusLoading && (
-        <div className="border-2 border-warning bg-amber-50 p-4 shadow-sw-default mb-6 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <AlertTriangle className="w-5 h-5 text-warning" />
-            <div>
-              <p className="font-mono text-sm font-bold uppercase tracking-wider text-amber-800">
-                {t('dashboard.llmNotConfiguredTitle')}
-              </p>
-              <p className="font-mono text-xs text-amber-700 mt-0.5">
-                {t('dashboard.llmNotConfiguredMessage')}
-              </p>
-            </div>
-          </div>
-          <Link href="/settings">
-            <Button variant="outline" size="sm" className="border-warning text-amber-700">
-              <Settings className="w-4 h-4 mr-2" />
-              {t('nav.settings')}
-            </Button>
-          </Link>
-        </div>
-      )}
-
       <SwissGrid>
         {/* 1. Master Resume Logic */}
         {!masterResumeId ? (
-          // LLM Not Configured or Upload State
-          !isLlmConfigured && !statusLoading ? (
-            <Link href="/settings" className="block h-full">
+          <ResumeUploadDialog
+            onUploadComplete={handleUploadComplete}
+            trigger={
               <Card
                 variant="interactive"
-                className="aspect-square h-full border-dashed border-warning bg-amber-50"
+                className="aspect-square h-full hover:bg-primary hover:text-canvas"
               >
-                <div className="flex-1 flex flex-col justify-between">
-                  <div className="w-14 h-14 border-2 border-warning bg-white flex items-center justify-center mb-4">
-                    <AlertTriangle className="w-7 h-7 text-warning" />
+                <div className="flex-1 flex flex-col justify-between pointer-events-none">
+                  <div className="w-14 h-14 border-2 border-current flex items-center justify-center mb-4">
+                    <span className="text-2xl leading-none relative top-[-2px]">+</span>
                   </div>
                   <div>
-                    <CardTitle className="text-lg uppercase text-amber-800 mb-2">
-                      {t('dashboard.setupRequiredTitle')}
+                    <CardTitle className="text-xl uppercase">
+                      {t('dashboard.initializeMasterResume')}
                     </CardTitle>
-                    <CardDescription className="text-amber-700 text-xs">
-                      {t('dashboard.setupRequiredMessage')}
+                    <CardDescription className="mt-2 opacity-60 group-hover:opacity-100 text-current">
+                      {'// '}
+                      {t('dashboard.initializeSequence')}
                     </CardDescription>
-                    <div className="flex items-center gap-2 mt-4 text-amber-700 group-hover:text-amber-900">
-                      <Settings className="w-4 h-4" />
-                      <span className="font-mono text-xs font-bold uppercase">
-                        {t('nav.goToSettings')}
-                      </span>
-                    </div>
                   </div>
                 </div>
               </Card>
-            </Link>
-          ) : (
-            <ResumeUploadDialog
-              onUploadComplete={handleUploadComplete}
-              trigger={
-                <Card
-                  variant="interactive"
-                  className="aspect-square h-full hover:bg-primary hover:text-canvas"
-                >
-                  <div className="flex-1 flex flex-col justify-between pointer-events-none">
-                    <div className="w-14 h-14 border-2 border-current flex items-center justify-center mb-4">
-                      <span className="text-2xl leading-none relative top-[-2px]">+</span>
-                    </div>
-                    <div>
-                      <CardTitle className="text-xl uppercase">
-                        {t('dashboard.initializeMasterResume')}
-                      </CardTitle>
-                      <CardDescription className="mt-2 opacity-60 group-hover:opacity-100 text-current">
-                        {'// '}
-                        {t('dashboard.initializeSequence')}
-                      </CardDescription>
-                    </div>
-                  </div>
-                </Card>
-              }
-            />
-          )
+            }
+          />
         ) : (
           // Master Resume Exists
           <Card
@@ -318,7 +251,7 @@ export default function DashboardPage() {
           <Card
             key={resume.resume_id}
             variant="interactive"
-            className="aspect-square h-full bg-canvas"
+            className="aspect-square h-full bg-canvas overflow-hidden"
             onClick={() => router.push(`/resumes/${resume.resume_id}`)}
           >
             <div className="flex-1 flex flex-col">
@@ -330,7 +263,7 @@ export default function DashboardPage() {
                   {resume.processing_status}
                 </span>
               </div>
-              <CardTitle className="text-lg">
+              <CardTitle className="text-lg break-all line-clamp-3">
                 {resume.filename || t('dashboard.tailoredResume')}
               </CardTitle>
               <CardDescription className="mt-auto pt-4 uppercase">

@@ -190,8 +190,8 @@ async def get_feature_config() -> FeatureConfigResponse:
     stored = _load_config()
 
     return FeatureConfigResponse(
-        enable_cover_letter=stored.get("enable_cover_letter", False),
-        enable_outreach_message=stored.get("enable_outreach_message", False),
+        enable_cover_letter=stored.get("enable_cover_letter", True),
+        enable_outreach_message=stored.get("enable_outreach_message", True),
     )
 
 
@@ -210,8 +210,8 @@ async def update_feature_config(request: FeatureConfigRequest) -> FeatureConfigR
     _save_config(stored)
 
     return FeatureConfigResponse(
-        enable_cover_letter=stored.get("enable_cover_letter", False),
-        enable_outreach_message=stored.get("enable_outreach_message", False),
+        enable_cover_letter=stored.get("enable_cover_letter", True),
+        enable_outreach_message=stored.get("enable_outreach_message", True),
     )
 
 

@@ -20,29 +20,16 @@ export default function Hero() {
       }}
     >
       <div className="flex h-full w-full flex-col items-center justify-center border border-black text-blue-700 bg-[#F0F0E8] shadow-[12px_12px_0px_0px_rgba(0,0,0,0.1)]">
-        <h1 className="mb-12 text-center font-mono text-6xl font-bold uppercase leading-none tracking-tighter md:text-8xl lg:text-9xl selection:bg-blue-700 selection:text-white">
-          {t('home.brandLine1')}
-          <br />
-          {t('home.brandLine2')}
+        <h1 className="mb-6 text-center font-mono text-6xl font-bold uppercase leading-none tracking-tighter md:text-8xl lg:text-9xl selection:bg-blue-700 selection:text-white">
+          <span className="text-[#1F2937] drop-shadow-[0_2px_0_rgba(0,0,0,0.15)]">
+            {t('home.brandLine1')}
+          </span>
+          <span className="text-blue-700 ml-2">{t('home.brandLine2')}</span>
         </h1>
-
+        <p className="mb-12 text-center font-mono text-xl md:text-2xl lg:text-3xl text-blue-700 max-w-2xl">
+          {t('home.brandDescription')}
+        </p>
         <div className="flex flex-col gap-4 md:flex-row md:gap-12">
-          <a
-            href="https://github.com/srbhr/Resume-Matcher"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={buttonClass}
-          >
-            GitHub
-          </a>
-          <a
-            href="https://resumematcher.fyi"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={buttonClass}
-          >
-            {t('home.docs')}
-          </a>
           <Link href="/dashboard" className={buttonClass}>
             {t('home.launchApp')}
           </Link>

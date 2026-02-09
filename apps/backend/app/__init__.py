@@ -1,3 +1,3 @@
-"""Resume Matcher Backend - Lean & Local"""
+"""Landed Job Backend - Lean & Local"""
 
 __version__ = "2.0.0"

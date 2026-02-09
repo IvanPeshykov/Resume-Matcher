@@ -12,7 +12,7 @@ from app.config import settings
 
 
 class Database:
-    """TinyDB wrapper for resume matcher data."""
+    """TinyDB wrapper for Landed Job data."""
 
     def __init__(self, db_path: Path | None = None):
         self.db_path = db_path or settings.db_path
@@ -128,7 +128,7 @@ class Database:
 
     # Job operations
     def create_job(
-        self, content: str, resume_id: str | None = None
+        self, content: str, resume_id: str | None = None, company_name: str | None = None
     ) -> dict[str, Any]:
         """Create a new job description entry."""
         job_id = str(uuid4())
@@ -138,6 +138,7 @@ class Database:
             "job_id": job_id,
             "content": content,
             "resume_id": resume_id,
+            "company_name": company_name,
             "created_at": now,
         }
         self.jobs.insert(doc)

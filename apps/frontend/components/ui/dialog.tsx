@@ -4,6 +4,7 @@ import * as React from 'react';
 import { X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useTranslations } from '@/lib/i18n';
+import { createPortal } from 'react-dom';
 
 /**
  * Swiss International Style Dialog Component
@@ -123,7 +124,11 @@ const DialogContent: React.FC<DialogContentProps> = ({ children, className }) =>
 
   if (!open) return null;
 
-  return (
+  // Guard against SSR or missing body
+  if (typeof document === 'undefined') return null;
+
+  // WRAP THE RETURN IN createPortal
+  return createPortal(
     <div className="fixed inset-0 z-50">
       {/* Overlay */}
       <div
@@ -152,7 +157,8 @@ const DialogContent: React.FC<DialogContentProps> = ({ children, className }) =>
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body // <-- This tells React to render this div at the end of the <body>
   );
 };
 

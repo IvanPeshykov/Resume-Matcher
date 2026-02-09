@@ -107,20 +107,6 @@ cd /app/backend
 python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 &
 BACKEND_PID=$!
 
-# Wait for backend to be ready
-info "Waiting for backend to be ready..."
-for i in {1..30}; do
-    if curl -s http://localhost:8000/api/v1/health > /dev/null 2>&1; then
-        status "Backend is ready (PID: $BACKEND_PID)"
-        break
-    fi
-    if [ $i -eq 30 ]; then
-        error "Backend failed to start within 30 seconds"
-        exit 1
-    fi
-    sleep 1
-done
-
 # Start frontend
 echo ""
 info "Starting frontend server..."

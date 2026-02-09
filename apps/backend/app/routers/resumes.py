@@ -524,8 +524,8 @@ async def improve_resume_confirm_endpoint(
         raise HTTPException(status_code=404, detail="Job description not found")
 
     feature_config = _load_feature_config()
-    enable_cover_letter = feature_config.get("enable_cover_letter", False)
-    enable_outreach = feature_config.get("enable_outreach_message", False)
+    enable_cover_letter = feature_config.get("enable_cover_letter", True)
+    enable_outreach = feature_config.get("enable_outreach_message", True)
     language = _get_content_language()
 
     stage = "serialize_improved_data"
@@ -587,11 +587,27 @@ async def improve_resume_confirm_endpoint(
             enable_outreach,
         )
 
+
         stage = "create_resume"
+        # Build a more distinguishable filename: include original stem, company name, and short uuid
+        orig_stem = Path(resume.get("filename", "resume")).stem
+        safe_stem = "".join(c if (c.isalnum() or c in ("-", "_")) else "_" for c in orig_stem)
+        # Try to get company name from job (if available)
+        company = job.get("company_name")
+        if not company:
+            # Try to extract from job["content"] heuristically (optional, fallback)
+            company = None
+        if company:
+            safe_company = "".join(c if (c.isalnum() or c in ("-", "_")) else "_" for c in company.strip())
+        else:
+            safe_company = "company"
+        short_id = uuid4().hex[:4]
+        filename = f"{safe_stem}_{safe_company}_{short_id}"
+
         tailored_resume = db.create_resume(
             content=improved_text,
             content_type="json",
-            filename=f"tailored_{resume.get('filename', 'resume')}",
+            filename=filename,
             is_master=False,
             parent_id=request.resume_id,
             processed_data=improved_data,
@@ -655,8 +671,8 @@ async def improve_resume_endpoint(
 
     # Load feature configuration and content language
     feature_config = _load_feature_config()
-    enable_cover_letter = feature_config.get("enable_cover_letter", False)
-    enable_outreach = feature_config.get("enable_outreach_message", False)
+    enable_cover_letter = feature_config.get("enable_cover_letter", True)
+    enable_outreach = feature_config.get("enable_outreach_message", True)
     language = _get_content_language()
 
     try:

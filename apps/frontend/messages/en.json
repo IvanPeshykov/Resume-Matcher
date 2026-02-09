@@ -33,8 +33,9 @@
     "popupBlocked": "Popup blocked. Please allow popups or open this URL manually: {url}"
   },
   "home": {
-    "brandLine1": "Resume",
-    "brandLine2": "Matcher",
+    "brandLine1": "LANDED",
+    "brandLine2": "JOB",
+    "brandDescription": "Tailor your resume for any job with AI assistance",
     "docs": "Docs",
     "launchApp": "Launch App"
   },
@@ -282,7 +283,7 @@
           "website": "Website"
         },
         "placeholders": {
-          "projectName": "Resume Matcher",
+          "projectName": "Landed Job",
           "role": "Creator",
           "years": "2023",
           "github": "github.com/username/project",
@@ -437,7 +438,7 @@
     "selectResume": "Select Resume",
     "pasteJobDescription": "Paste Job Description",
     "pasteJobDescriptionBelow": "Paste Job Description Below",
-    "jobDescriptionPlaceholder": "Paste the job description here...",
+    "jobDescriptionPlaceholder": "Paste the job description or LinkedIn job url here...",
     "promptLabel": "Tailoring intensity",
     "promptDescription": "Choose how strongly to align your resume to the job description.",
     "promptOptions": {

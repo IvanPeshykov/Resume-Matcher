@@ -30,7 +30,7 @@ export const ResumeCard = ({ type, title, lastEdited, onClick }: ResumeCardProps
 
   return (
     <div onClick={onClick} className={baseClasses}>
-      <div className="flex-1 bg-gray-100 border border-gray-200 mb-4 overflow-hidden relative">
+      <div className="flex-1 bg-gray-100 border border-gray-200 mb-4 relative overflow-hidden">
         {/* Placeholder for resume preview */}
         <div className="absolute inset-0 flex items-center justify-center text-gray-300 font-mono text-xs">
           {t('dashboard.preview')}
